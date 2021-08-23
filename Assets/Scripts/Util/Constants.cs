@@ -30,4 +30,13 @@ public static class EOperationExtension
         EOperation.Division => n1 / n2,
         _ => 0
     };
+
+    public static Material GetMaterial(this EOperation i, Material positive, Material negative) => i switch
+    {
+        EOperation.Addition => positive,
+        EOperation.Subtraction => negative,
+        EOperation.Multiplication => positive,
+        EOperation.Division => negative,
+        _ => positive
+    };
 }

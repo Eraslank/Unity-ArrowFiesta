@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Gate
+  m_Name: Negative
   m_Shader: {fileID: -6465566751694194690, guid: 2696f0f03a6f3ce4a98803b87130d37b, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -32,5 +32,6 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats: []
-    m_Colors: []
+    m_Colors:
+    - _GateColor: {r: 1, g: 0.10980392, b: 0.18039216, a: 0}
   m_BuildTextureStacks: []

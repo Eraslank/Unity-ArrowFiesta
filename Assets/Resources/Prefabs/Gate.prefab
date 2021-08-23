@@ -140,7 +140,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 36255e12b400d1b4881de19eae35c4fd, type: 2}
+  - {fileID: 2100000, guid: 9419f4acfe4cbcd4d8a3210fdf4962ae, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -335,7 +335,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e540082473ebe9b42a2010b0fcff76ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gateRenderer: {fileID: 8920418908402089061}
   numberText: {fileID: 8920418908731888140}
+  positive: {fileID: 2100000, guid: 9419f4acfe4cbcd4d8a3210fdf4962ae, type: 2}
+  negative: {fileID: 2100000, guid: 36255e12b400d1b4881de19eae35c4fd, type: 2}
   operation: 0
   number: 30
 --- !u!1 &8920418908922625496
