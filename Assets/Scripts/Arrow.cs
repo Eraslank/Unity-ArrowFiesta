@@ -14,26 +14,31 @@ public class Arrow : MonoBehaviour, IPoolable
 
     public void DePool()
     {
+        transform.localPosition = Vector3.zero;
+        gameObject.SetActive(true);
         IsAvailable = false;
-        DOVirtual.Float(0, id, .5f, (val) => { position = val; SetPos(); }).OnComplete(() =>
-        {
-            gameObject.SetActive(true);
-        });
+        DOVirtual.Float(0, id, .5f, (val) => { position = val; SetPos(); });
     }
 
     public void Pool()
     {
-        IsAvailable = true;
-        transform.localPosition = Vector3.zero;
         DOVirtual.Float(position, 0, .5f, (val) => { position = val; SetPos(); }).OnComplete(() =>
         {
+            IsAvailable = true;
             gameObject.SetActive(false);
         });
     }
     public void SetPos()
     {
-        var x = position * unit * Mathf.Cos(position / freq);
-        var z = position * unit * Mathf.Sin(position / freq);
+        var x = 0f;
+        var z = 0f;
+
+        try
+        {
+            x = position * unit * Mathf.Cos(position / freq);
+            z = position * unit * Mathf.Sin(position / freq);
+        }
+        catch { }
         transform.localPosition = new Vector3(x, 0, z);
     }
 

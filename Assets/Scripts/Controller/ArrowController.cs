@@ -23,7 +23,7 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
     [SerializeField] GameObject[] test;
 
     public float spiralUnitBase = 0.1f;
-    public float spiralUnit = .08f;
+    //public float spiralUnit = .08f;
     public float spiralFreq = 3.5f;
 
     public void ChangeArrowCount(int count)
@@ -34,6 +34,12 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
         bool create = count > ArrowCount;
 
         var arrowCount = ArrowCount;
+
+        foreach (var arrow in arrows) // ReConfigure Previous Arrows
+        {
+            arrow.unit = spiralUnitBase / count;
+        }
+
         for (int i = 0; i < Mathf.Abs(count - arrowCount); i++)
         {
             Arrow arrow;
@@ -42,9 +48,8 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
                 arrow = arrowPool.Get();
                 arrow.transform.SetParent(arrowHolder);
                 arrow.position = arrow.id = arrowCount + i;
-                arrow.unit = spiralUnit;
+                arrow.unit = spiralUnitBase / count;
                 arrow.freq = spiralFreq;
-                arrow.SetPos();
                 arrow.DePool();
                 arrows.Push(arrow);
                 continue;
@@ -58,8 +63,9 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
     // Start is called before the first frame update
     void Start()
     {
-
+        
         mainCamera = Camera.main;
+        
         /*
         Vector3[] pos = new Vector3[test.Length];
         for (int i = 0; i < pos.Length; i++)
@@ -72,9 +78,8 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
             var arrow = arrowPool.Get();
             arrow.transform.SetParent(arrowHolder);
             arrow.position = arrow.id = i;
-            arrow.unit = spiralUnit;
+            arrow.unit = spiralUnitBase/(float)baseArrowCount;
             arrow.freq = spiralFreq;
-            arrow.SetPos();
             arrow.DePool();
             arrows.Push(arrow);
         }
@@ -109,7 +114,7 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
     {
         foreach (var arrow in arrows)
         {
-            arrow.unit = spiralUnit;
+            arrow.unit = spiralUnitBase / (float)ArrowCount;
             arrow.freq = spiralFreq;
             arrow.SetPos();
         }
