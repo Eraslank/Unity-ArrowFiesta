@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : MonoBehaviourSingleton<CameraController>
 {
 
     [SerializeField] Transform target;
+    [SerializeField] Transform cam;
     Vector3 velocity = Vector3.zero;
-    public float smoothTime = 2f;
+    public float smoothTime = .5f;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,9 +19,6 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var offsetPos = target.position + new Vector3(0, 1f, 0);
-        var targetPos = offsetPos + target.forward * -5f;
-        transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref velocity, smoothTime);
-        transform.LookAt(offsetPos, Vector3.up);
+        transform.position = Vector3.SmoothDamp(transform.position, target.position, ref velocity, smoothTime);
     }
 }

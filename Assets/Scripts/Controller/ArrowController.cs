@@ -13,9 +13,6 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
     [SerializeField] private Transform arrowHolder;
     [SerializeField] private GameObject arrowPrefab;
 
-
-    private Camera mainCamera;
-
     Stack<Arrow> arrows = new Stack<Arrow>();
 
     PoolManager<Arrow> arrowPool;
@@ -23,7 +20,6 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
     [SerializeField] GameObject[] test;
 
     public float spiralUnitBase = 0.1f;
-    //public float spiralUnit = .08f;
     public float spiralFreq = 3.5f;
 
     public void ChangeArrowCount(int count)
@@ -63,15 +59,6 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
     // Start is called before the first frame update
     void Start()
     {
-        
-        mainCamera = Camera.main;
-        
-        /*
-        Vector3[] pos = new Vector3[test.Length];
-        for (int i = 0; i < pos.Length; i++)
-            pos[i] = test[i].transform.position;
-        transform.DOPath(pos, 5f, PathType.CatmullRom, PathMode.Full3D, gizmoColor: Color.red).SetLookAt(0,false).SetEase(Ease.Linear).SetLoops(-1);
-        */
         arrowPool = new PoolManager<Arrow>(arrowPrefab);
         for (int i = 0; i < baseArrowCount; i++)
         {
@@ -84,6 +71,31 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
             arrows.Push(arrow);
         }
     }
+
+    public void SetPath(Vector3[] pos)
+    {
+        transform.DOPath(pos, pos.Length-1, PathType.CatmullRom, PathMode.Full3D, gizmoColor: Color.red)
+            .SetLookAt(0, false)
+            .SetEase(Ease.Linear)
+            .SetLoops(-1)
+            .OnWaypointChange((id)=> { CalculateRotation(id); });
+    }
+    public void CalculateRotation(int id)
+    {
+        var wayPoint = path.ElementAt(id);
+        CameraController.Instance.transform.DORotateQuaternion(wayPoint.transform.rotation, .5f);
+    }
+
+    List<WayPoint> path;
+    public void SetPath(List<WayPoint> wayPoints)
+    {
+        path = wayPoints;
+        Vector3[] pos = new Vector3[wayPoints.Count];
+        for (int i = 0; i < pos.Length; i++)
+            pos[i] = wayPoints[i].transform.position;
+        SetPath(pos.ToArray());
+    }
+
     public void Test()
     {
         foreach (var arrow in arrows)
