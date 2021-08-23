@@ -5,7 +5,7 @@ using UnityEngine;
 public class Test : MonoBehaviour
 {
     [SerializeField] private float unit = 5f;
-    [SerializeField] private float division = 10f;
+    [SerializeField] private float freq = 10f;
     private void Start()
     {
         for (int i = 0; i <= 100; i++)
@@ -14,6 +14,6 @@ public class Test : MonoBehaviour
 
     Vector3 GetSpiralPos(int i)
     {
-        return new Vector3(i*unit * Mathf.Cos(i/division), i*unit * Mathf.Sin(i/division));
+        return new Vector3(i*unit * Mathf.Cos(i/freq), i*unit * Mathf.Sin(i/freq));
     }
 }
