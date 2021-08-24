@@ -570,7 +570,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75167277862ecf64989aa22a4b3d278b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelLength: 5
+  levelLength: 25
   roadPrefabs:
   - {fileID: 1065933511797518920, guid: 80f957ff1a3b780418ae171e25a98e51, type: 3}
   - {fileID: 5033927205271099008, guid: 7a225282219e33b4394e30c60e11ae7a, type: 3}

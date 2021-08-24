@@ -31,8 +31,11 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
     {
         if (count == arrowCount)
             return;
-        else if (count < 0) // GAMEOVER
+        else if (count <= 0) // GAMEOVER
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             return;
+        }
 
         arrowCountText.text = count.ToString();
 
