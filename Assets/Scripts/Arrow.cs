@@ -37,18 +37,19 @@ public class Arrow : MonoBehaviour, IPoolable
         {
             x = position * unit * Mathf.Cos(position / freq);
             z = position * unit * Mathf.Sin(position / freq);
+            transform.localPosition = new Vector3(x, 0, z);
         }
-        catch { }
-        transform.localPosition = new Vector3(x, 0, z);
+        catch
+        {
+            transform.localPosition = Vector3.zero;
+        }
     }
 
-    public void Merge()
+    public void Merge(bool pool)
     {
-        DOVirtual.Float(position, 0, 5f, (val) =>
-        {
-            position = val;
-            SetPos();
-        }).OnComplete(Pool);
+        if (pool)
+            Pool();
+        return;
     }
 
     // Start is called before the first frame update

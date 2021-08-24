@@ -24,6 +24,8 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
     public float spiralUnitBase = 0.1f;
     public float spiralFreq = 3.5f;
 
+    CameraController cc;
+
     public void ChangeArrowCount(int count)
     {
         if (count == arrowCount)
@@ -37,7 +39,7 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
 
         foreach (var arrow in arrows) // ReConfigure Previous Arrows
         {
-            arrow.unit = spiralUnitBase / (float)(count>maxVisibleArrowCount?maxVisibleArrowCount:count);
+            arrow.unit = spiralUnitBase / (float)(count > maxVisibleArrowCount ? maxVisibleArrowCount : count);
             arrow.SetPos();
         }
 
@@ -72,7 +74,7 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
     }
 
     // Start is called before the first frame update
-    void Start()
+    IEnumerator Start()
     {
         arrowPool = new PoolManager<Arrow>(arrowPrefab);
         for (int i = 0; i < baseArrowCount; i++)
@@ -88,6 +90,9 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
         }
 
         arrowCountText.text = baseArrowCount.ToString();
+
+        while ((cc = CameraController.Instance) == null)
+            yield return null;
     }
 
     private void SetPath(Vector3[] pos)
@@ -95,48 +100,71 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
         transform.DOPath(pos, pos.Length - 1, PathType.CatmullRom, PathMode.Full3D, gizmoColor: Color.red)
             .SetLookAt(0, false)
             .SetEase(Ease.Linear)
-            .SetLoops(-1)
-            .OnWaypointChange((id) => { CalculateRotation(id); });
+            .OnWaypointChange((id) => { CalculateRotation(id); })
+            .OnComplete(MergeArrows);
     }
     public void CalculateRotation(int id)
     {
         if (id + 1 >= path.Count)
             return;
         var wayPoint = path.ElementAt(id + 1);
-        CameraController.Instance.transform.DORotateQuaternion(wayPoint.transform.rotation, 1f).SetEase(Ease.OutCirc);
+        cc.transform.DORotateQuaternion(wayPoint.transform.rotation, 1f).SetEase(Ease.Linear);
     }
 
     List<WayPoint> path;
     public void SetPath(List<WayPoint> wayPoints)
     {
         path = wayPoints;
-        Vector3[] pos = new Vector3[wayPoints.Count];
+    }
+
+
+    bool didBegin = false;
+    private void BeginGame()
+    {
+        Vector3[] pos = new Vector3[path.Count];
         for (int i = 0; i < pos.Length; i++)
-            pos[i] = wayPoints[i].transform.position;
+            pos[i] = path[i].transform.position;
         SetPath(pos.ToArray());
     }
 
-    public void Test()
+    public void MergeArrows()
     {
-        foreach (var arrow in arrows)
-            arrow.Merge();
+        canMove = false;
         var arr = arrows.Last();
+        foreach (var arrow in arrows)
+            arrow.Merge(arr != arrow);
         DOVirtual.Vector3(Vector3.one, new Vector3(arrows.Count / 20, 2, arrows.Count / 20), 5f, (val) =>
-         {
-             arr.transform.localScale = val;
-         });
+        {
+            arr.transform.localScale = val;
+        });
+
+        transform.DORotate(Vector3.zero, .25f)
+        .OnComplete(() =>
+        {
+            transform.DOMove(transform.position + cc.transform.up, .75f).SetEase(Ease.InOutBack);
+        });
+        arrowHolder.DOLocalMove(Vector3.zero, .5f);
     }
 
-    // Update is called once per frame
+    bool canMove = true;
     void Update()
     {
-        if (Input.touchCount > 0)
+        arrowCountText.transform.parent.rotation = cc.transform.rotation;
+        if (canMove && Input.touchCount > 0)
         {
             foreach (var touch in Input.touches)
             {
                 if (touch.phase == TouchPhase.Moved)
                 {
-                    arrowHolder.localPosition = new Vector3(Mathf.Clamp(arrowHolder.localPosition.x + touch.deltaPosition.x * dragSensitivty, -2, 2), 0, 0);
+                    if (!didBegin)
+                    {
+                        didBegin = true;
+                        BeginGame();
+                    }
+                    var pos = arrowHolder.localPosition;
+                    pos += cc.transform.right * touch.deltaPosition.x * dragSensitivty;
+                    pos = Vector3.ClampMagnitude(pos, 1.5f);
+                    arrowHolder.localPosition = pos;
                 }
             }
         }
