@@ -15,7 +15,7 @@ public class LevelGeneration : MonoBehaviour
         List<WayPoint> pos = new List<WayPoint>();
         for (int i = 0; i < levelLength; i++)
         {
-            var road = Instantiate(roadPrefabs.RandomItem()).GetComponent<Road>();
+            var road = Instantiate(roadPrefabs.RandomItem(),transform).GetComponent<Road>();
             if (head == null)
                 head = road;
             current?.AttachToTail(road);

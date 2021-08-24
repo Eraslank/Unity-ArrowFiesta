@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 80fa4f34db87aad4d93c45188b19bfd6, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.028951209, g: 0.29763886, b: 0.49119085, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: edfa7d505e286c14aa28d5eb31f2a488, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 111485109}
   cam: {fileID: 1355606812}
-  smoothTime: 0.5
+  smoothTime: 0.175
 --- !u!4 &726905523
 Transform:
   m_ObjectHideFlags: 0
@@ -205,7 +205,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -474,7 +474,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 65
   orthographic: 0
@@ -570,9 +570,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75167277862ecf64989aa22a4b3d278b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelLength: 10
+  levelLength: 5
   roadPrefabs:
-  - {fileID: 8231358671923185868, guid: 31b6847761b56104eade2f78d775e65e, type: 3}
+  - {fileID: 1065933511797518920, guid: 80f957ff1a3b780418ae171e25a98e51, type: 3}
+  - {fileID: 5033927205271099008, guid: 7a225282219e33b4394e30c60e11ae7a, type: 3}
+  - {fileID: 5408804042376468401, guid: b3e7c47662803b949a7e4372bc90b163, type: 3}
+  - {fileID: 1681924790376088881, guid: 6458dbe084f65ae4c95ad351f296cddb, type: 3}
 --- !u!4 &1794783404
 Transform:
   m_ObjectHideFlags: 0

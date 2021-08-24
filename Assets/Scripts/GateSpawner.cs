@@ -15,13 +15,14 @@ public class GateSpawner : MonoBehaviour
 
         var positive = gateBag.GetRandom();
 
-        if(positive.HasValue && Physics.Raycast(transform.position, -transform.up, out RaycastHit hit,5f))
+        if(positive.HasValue && Physics.Raycast(transform.position, -transform.up, out RaycastHit hit,5))
         {
             var pos = hit.point;
             var gate = Instantiate(gatePrefab, transform.parent).GetComponent<Gate>();
             var operation = EOperationExtension.GetRandomOperation(positive.Value, out short number);
             gate.Initialize(operation, number);
             gate.transform.position = pos;
+            gate.transform.eulerAngles = transform.eulerAngles;
         }
 
 

@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxVisibleArrowCount: 150
-  baseArrowCount: 2
+  baseArrowCount: 1
   arrowCount: 0
   dragSensitivty: 0.01
   arrowHolder: {fileID: 7749991211344310171}

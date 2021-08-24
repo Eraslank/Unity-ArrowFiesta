@@ -6,7 +6,7 @@ public class CameraController : MonoBehaviourSingleton<CameraController>
 {
 
     [SerializeField] Transform target;
-    [SerializeField] Transform cam;
+    [SerializeField] public Transform cam;
     Vector3 velocity = Vector3.zero;
     public float smoothTime = .5f;
     // Start is called before the first frame update

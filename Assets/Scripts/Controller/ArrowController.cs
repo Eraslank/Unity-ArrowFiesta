@@ -4,6 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using System.Linq;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ArrowController : MonoBehaviourSingleton<ArrowController>
 {
@@ -97,7 +98,7 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
 
     private void SetPath(Vector3[] pos)
     {
-        transform.DOPath(pos, pos.Length - 1, PathType.CatmullRom, PathMode.Full3D, gizmoColor: Color.red)
+        transform.DOPath(pos, (pos.Length - 1)*2f, PathType.CatmullRom, PathMode.Full3D, gizmoColor: Color.red)
             .SetLookAt(0, false)
             .SetEase(Ease.Linear)
             .OnWaypointChange((id) => { CalculateRotation(id); })
@@ -108,7 +109,7 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
         if (id + 1 >= path.Count)
             return;
         var wayPoint = path.ElementAt(id + 1);
-        cc.transform.DORotateQuaternion(wayPoint.transform.rotation, 1f).SetEase(Ease.Linear);
+        cc.transform.DORotateQuaternion(wayPoint.transform.rotation, 1.5f).SetEase(Ease.OutExpo);
     }
 
     List<WayPoint> path;
@@ -141,29 +142,36 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
         transform.DORotate(Vector3.zero, .25f)
         .OnComplete(() =>
         {
-            transform.DOMove(transform.position + cc.transform.up, .75f).SetEase(Ease.InOutBack);
+            transform.DOMove(transform.position + cc.transform.up, .75f).SetEase(Ease.InOutBack).OnComplete(()=>restart = true);
         });
         arrowHolder.DOLocalMove(Vector3.zero, .5f);
     }
 
     bool canMove = true;
+    bool restart = false;
     void Update()
     {
         arrowCountText.transform.parent.rotation = cc.transform.rotation;
-        if (canMove && Input.touchCount > 0)
+        if (Input.touchCount > 0)
         {
             foreach (var touch in Input.touches)
             {
                 if (touch.phase == TouchPhase.Moved)
                 {
+                    if(restart)
+                    {
+                        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                    }
+                    if (!canMove)
+                        return;
                     if (!didBegin)
                     {
                         didBegin = true;
                         BeginGame();
                     }
                     var pos = arrowHolder.localPosition;
-                    pos += cc.transform.right * touch.deltaPosition.x * dragSensitivty;
-                    pos = Vector3.ClampMagnitude(pos, 1.5f);
+                    pos += cc.cam.transform.right * touch.deltaPosition.x * dragSensitivty;
+                    pos = Vector3.ClampMagnitude(pos, 1.25f);
                     arrowHolder.localPosition = pos;
                 }
             }

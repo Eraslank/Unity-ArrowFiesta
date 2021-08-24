@@ -10,9 +10,6 @@ public class Road : MonoBehaviour
 
     public Road head = null, tail = null;
 
-    public int roadId = 0;
-
-
     public WayPoint[] wayPoints;
     [SerializeField] bool autoDetectWayPoints = false;
 
