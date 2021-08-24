@@ -13,6 +13,10 @@ public enum EOperation : int
 
 public static class EOperationExtension
 {
+    const short maxAdd = 51;
+    const short maxSubs = 31;
+    const short maxDivision = 6;
+    const short maxMultiplication = 5;
     public static string Symbol(this EOperation i) => i switch
     {
         EOperation.Addition => "+",
@@ -39,4 +43,25 @@ public static class EOperationExtension
         EOperation.Division => negative,
         _ => positive
     };
+
+    public static short GetMaxValue(this EOperation i) => i switch
+    {
+        EOperation.Addition => maxAdd,
+        EOperation.Subtraction => maxSubs,
+        EOperation.Multiplication => maxMultiplication,
+        EOperation.Division => maxDivision,
+        _ => 0
+    };
+
+    public static EOperation GetRandomOperation(bool positive, out short number)
+    {
+        EOperation operation = EOperation.Addition;
+        if (positive)
+            operation = Random.Range(0, 2) == 0 ? EOperation.Addition : EOperation.Multiplication;
+        else
+            operation = Random.Range(0, 2) == 0 ? EOperation.Subtraction : EOperation.Division;
+
+        number = (short)Random.Range(1,operation.GetMaxValue());
+        return operation;
+    }
 }

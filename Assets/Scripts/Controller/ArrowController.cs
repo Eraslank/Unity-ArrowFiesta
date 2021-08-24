@@ -3,56 +3,71 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using System.Linq;
+using UnityEngine.UI;
 
 public class ArrowController : MonoBehaviourSingleton<ArrowController>
 {
+    public short maxVisibleArrowCount = 100;
     public int baseArrowCount = 1;
-    public int ArrowCount { get => arrows.Count; private set { } }
+    public int arrowCount;
 
     [SerializeField] private float dragSensitivty = 0.1f;
     [SerializeField] private Transform arrowHolder;
     [SerializeField] private GameObject arrowPrefab;
 
+    [SerializeField] private Text arrowCountText;
+
     Stack<Arrow> arrows = new Stack<Arrow>();
 
     PoolManager<Arrow> arrowPool;
-
-    [SerializeField] GameObject[] test;
 
     public float spiralUnitBase = 0.1f;
     public float spiralFreq = 3.5f;
 
     public void ChangeArrowCount(int count)
     {
-        if (count == ArrowCount)
+        if (count == arrowCount)
+            return;
+        else if (count < 0) // GAMEOVER
             return;
 
-        bool create = count > ArrowCount;
+        arrowCountText.text = count.ToString();
 
-        var arrowCount = ArrowCount;
+        bool create = count > arrowCount;
 
         foreach (var arrow in arrows) // ReConfigure Previous Arrows
         {
-            arrow.unit = spiralUnitBase / count;
+            arrow.unit = spiralUnitBase / (float)(count>maxVisibleArrowCount?maxVisibleArrowCount:count);
+            arrow.SetPos();
         }
 
-        for (int i = 0; i < Mathf.Abs(count - arrowCount); i++)
+        var difference = Mathf.Abs(count - arrowCount);
+
+        for (int i = 0; i < difference; i++)
         {
             Arrow arrow;
             if (create)
             {
-                arrow = arrowPool.Get();
-                arrow.transform.SetParent(arrowHolder);
-                arrow.position = arrow.id = arrowCount + i;
-                arrow.unit = spiralUnitBase / count;
-                arrow.freq = spiralFreq;
-                arrow.DePool();
-                arrows.Push(arrow);
+                if (arrowCount < maxVisibleArrowCount)
+                {
+                    arrow = arrowPool.Get();
+                    arrow.transform.SetParent(arrowHolder);
+                    arrow.position = arrow.id = arrowCount + i;
+                    arrow.unit = spiralUnitBase / count;
+                    arrow.freq = spiralFreq;
+                    arrow.DePool();
+                    arrows.Push(arrow);
+                }
+                arrowCount++;
                 continue;
             }
+            if (arrowCount < maxVisibleArrowCount)
+            {
+                arrow = arrows.Pop();
+                arrow.Pool();
+            }
 
-            arrow = arrows.Pop();
-            arrow.Pool();
+            arrowCount--;
         }
     }
 
@@ -65,25 +80,30 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
             var arrow = arrowPool.Get();
             arrow.transform.SetParent(arrowHolder);
             arrow.position = arrow.id = i;
-            arrow.unit = spiralUnitBase/(float)baseArrowCount;
+            arrow.unit = spiralUnitBase / (float)baseArrowCount;
             arrow.freq = spiralFreq;
             arrow.DePool();
             arrows.Push(arrow);
+            arrowCount++;
         }
+
+        arrowCountText.text = baseArrowCount.ToString();
     }
 
-    public void SetPath(Vector3[] pos)
+    private void SetPath(Vector3[] pos)
     {
-        transform.DOPath(pos, pos.Length-1, PathType.CatmullRom, PathMode.Full3D, gizmoColor: Color.red)
+        transform.DOPath(pos, pos.Length - 1, PathType.CatmullRom, PathMode.Full3D, gizmoColor: Color.red)
             .SetLookAt(0, false)
             .SetEase(Ease.Linear)
             .SetLoops(-1)
-            .OnWaypointChange((id)=> { CalculateRotation(id); });
+            .OnWaypointChange((id) => { CalculateRotation(id); });
     }
     public void CalculateRotation(int id)
     {
-        var wayPoint = path.ElementAt(id);
-        CameraController.Instance.transform.DORotateQuaternion(wayPoint.transform.rotation, .5f);
+        if (id + 1 >= path.Count)
+            return;
+        var wayPoint = path.ElementAt(id + 1);
+        CameraController.Instance.transform.DORotateQuaternion(wayPoint.transform.rotation, 1f).SetEase(Ease.OutCirc);
     }
 
     List<WayPoint> path;
@@ -121,14 +141,15 @@ public class ArrowController : MonoBehaviourSingleton<ArrowController>
             }
         }
     }
-
+    /*
     private void OnValidate()
     {
         foreach (var arrow in arrows)
         {
-            arrow.unit = spiralUnitBase / (float)ArrowCount;
+            arrow.unit = spiralUnitBase / (float)arrowCount;
             arrow.freq = spiralFreq;
             arrow.SetPos();
         }
     }
+    */
 }

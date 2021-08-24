@@ -27,7 +27,10 @@ public class Gate : MonoBehaviour
     {
         var arrowController = other.gameObject.GetComponentInParent<ArrowController>();
         if (arrowController)
-            arrowController.ChangeArrowCount(operation.Calculate(arrowController.ArrowCount, number));
+        {
+            arrowController.ChangeArrowCount(operation.Calculate(arrowController.arrowCount, number));
+            GetComponent<BoxCollider>().enabled = false;
+        }
     }
 
     private void OnValidate()
